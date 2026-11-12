@@ -1,0 +1,188 @@
+html {
+  overflow-x: clip;
+}
+
+body {
+  background-color: #faf8f5;
+  color: #18181b;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  overflow-x: clip;
+}
+
+#navbar {
+  transition:
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    backdrop-filter 0.28s ease;
+}
+#navbar.is-scrolled {
+  background-color: rgba(250, 248, 245, 0.72) !important;
+  border-color: rgba(230, 224, 214, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(24, 24, 27, 0.07);
+}
+
+.font-serif-editorial {
+  font-family: "Fraunces", Georgia, serif;
+}
+
+/* Hide scrollbar for horizontal pill bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(34px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active,
+.reveal-left.active,
+.reveal-right.active,
+.reveal-scale.active {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Stagger delays */
+.delay-75 {
+  transition-delay: 75ms;
+}
+.delay-150 {
+  transition-delay: 150ms;
+}
+.delay-225 {
+  transition-delay: 225ms;
+}
+.delay-300 {
+  transition-delay: 300ms;
+}
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+/* Dashed Flight Path Animation */
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+.flight-dash {
+  stroke-dasharray: 5 6;
+  animation: dashFlow 14s linear infinite;
+}
+
+/* Subtle floating animation for plane & decorative elements */
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+/* Pulse ring for video button */
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+.play-pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.6);
+  animation: pulseRing 2.2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+/* Card 3D Subtle Hover */
+.card-interactive {
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-interactive:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 32px -12px rgba(94, 58, 36, 0.16);
+}
+
+.destination-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+.destination-track::-webkit-scrollbar {
+  display: none;
+}
+.destination-slide {
+  flex: 0 0 84%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 640px) {
+  .destination-slide {
+    flex-basis: calc((100% - 1.25rem) / 2);
+  }
+}
+@media (min-width: 1024px) {
+  .destination-slide {
+    flex-basis: calc((100% - 3.75rem) / 4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .destination-track {
+    scroll-behavior: auto;
+  }
+}

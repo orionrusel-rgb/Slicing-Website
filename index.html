@@ -1,0 +1,2078 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hidden Wonders — Discover Indonesia</title>
+
+    <!-- Google Fonts: Fraunces / Playfair Display for Editorial Serif & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="slicing1.js"></script>
+
+    <link rel="stylesheet" href="slicing1.css" />
+  </head>
+  <body
+    class="antialiased selection:bg-brandOrange/20 selection:text-brandOrange"
+  >
+    <!-- ================= TOP SCROLL PROGRESS BAR ================= -->
+    <div
+      class="fixed top-0 left-0 right-0 h-1 z-50 bg-transparent pointer-events-none"
+    >
+      <div
+        id="scroll-progress"
+        class="h-full bg-gradient-to-r from-brandBrown via-brandOrange to-amber-500 w-0 transition-all duration-75"
+      ></div>
+    </div>
+
+    <!-- ================= TOAST NOTIFICATION ================= -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 ease-out bg-ink text-white shadow-2xl rounded-2xl px-5 py-3.5 flex items-center space-x-3 text-xs max-w-sm border border-white/10"
+    >
+      <div
+        class="w-8 h-8 rounded-full bg-brandOrange text-white flex items-center justify-center shrink-0"
+      >
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+      </div>
+      <div>
+        <h5 id="toast-title" class="font-bold text-white text-xs">
+          Hidden Wonders
+        </h5>
+        <p id="toast-msg" class="text-[11px] text-gray-300 mt-0.5">
+          Memuat destinasi pilihan...
+        </p>
+      </div>
+    </div>
+
+    <!-- ================= SEARCH MODAL ================= -->
+    <div
+      id="search-modal"
+      class="fixed inset-0 z-50 bg-black/55 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div
+        id="search-modal-box"
+        class="bg-cream rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-lineWarm transform scale-95 opacity-0 transition-all duration-200"
+      >
+        <div
+          class="flex items-center justify-between pb-3.5 border-b border-lineWarm"
+        >
+          <div
+            class="flex items-center space-x-2 text-brandBrown font-bold text-sm"
+          >
+            <i data-lucide="compass" class="w-4 h-4 text-brandOrange"></i>
+            <span>Explore Indonesia's Hidden Wonders</span>
+          </div>
+          <button
+            onclick="toggleSearchModal(false)"
+            class="p-1.5 rounded-full text-muted hover:text-ink hover:bg-creamDark transition"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="mt-4 relative">
+          <i
+            data-lucide="search"
+            class="w-4 h-4 absolute left-4 top-3.5 text-muted"
+          ></i>
+          <input
+            type="text"
+            id="search-input"
+            oninput="filterLiveSearch(this.value)"
+            placeholder="Cari Bromo, Raja Ampat, Wae Rebo, Nusa Penida..."
+            class="w-full pl-11 pr-4 py-3 bg-white rounded-full border border-lineWarm focus:outline-none focus:border-brandOrange text-xs text-ink shadow-inner"
+          />
+        </div>
+        <div class="mt-4">
+          <p
+            class="text-[10px] font-bold uppercase tracking-wider text-muted mb-2.5"
+          >
+            Pencarian Populer
+          </p>
+          <div id="search-suggestions" class="flex flex-wrap gap-2">
+            <button
+              onclick="runQuickSearch('Gunung Bromo')"
+              class="px-3 py-1.5 rounded-full bg-white hover:bg-brandOrange hover:text-white text-xs border border-lineWarm transition"
+            >
+              🌋 Gunung Bromo
+            </button>
+            <button
+              onclick="runQuickSearch('Raja Ampat')"
+              class="px-3 py-1.5 rounded-full bg-white hover:bg-brandOrange hover:text-white text-xs border border-lineWarm transition"
+            >
+              🏝️ Raja Ampat
+            </button>
+            <button
+              onclick="runQuickSearch('Kelingking Beach')"
+              class="px-3 py-1.5 rounded-full bg-white hover:bg-brandOrange hover:text-white text-xs border border-lineWarm transition"
+            >
+              🌊 Nusa Penida
+            </button>
+            <button
+              onclick="runQuickSearch('Wae Rebo')"
+              class="px-3 py-1.5 rounded-full bg-white hover:bg-brandOrange hover:text-white text-xs border border-lineWarm transition"
+            >
+              🛖 Desa Wae Rebo
+            </button>
+            <button
+              onclick="runQuickSearch('Pulau Padar')"
+              class="px-3 py-1.5 rounded-full bg-white hover:bg-brandOrange hover:text-white text-xs border border-lineWarm transition"
+            >
+              ⛵ Labuan Bajo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PLAN YOUR TRIP / SIGN IN MODAL ================= -->
+    <div
+      id="trip-modal"
+      class="fixed inset-0 z-50 bg-black/55 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-cream rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl border border-lineWarm relative"
+      >
+        <button
+          onclick="toggleTripModal(false)"
+          class="absolute top-5 right-5 p-1.5 rounded-full text-muted hover:text-ink hover:bg-creamDark transition"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <div
+          class="flex items-center space-x-2 text-brandOrange text-xs font-bold uppercase tracking-wider mb-1"
+        >
+          <i data-lucide="plane" class="w-4 h-4"></i>
+          <span>Custom Itinerary Builder</span>
+        </div>
+        <h3 class="font-serif-editorial text-2xl font-bold text-ink">
+          Plan Your Indonesian Journey
+        </h3>
+        <p class="text-xs text-muted mt-1">
+          Pilih destinasi impianmu dan kurator lokal kami akan menyiapkan rute
+          terbaik.
+        </p>
+
+        <form onsubmit="submitTripPlan(event)" class="mt-5 space-y-3.5 text-xs">
+          <div>
+            <label class="block font-semibold text-ink mb-1"
+              >Destinasi Tujuan Utama</label
+            >
+            <select
+              id="trip-dest"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-lineWarm focus:outline-none focus:border-brandOrange"
+            >
+              <option>Bali & Nusa Penida (Kelingking Beach)</option>
+              <option>Labuan Bajo & Pulau Padar, NTT</option>
+              <option>Raja Ampat & Puncak Wayag, Papua</option>
+              <option>Candi Borobudur & Gunung Bromo, Jawa</option>
+              <option>Desa Adat Wae Rebo, Flores</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-ink mb-1"
+                >Bulan Keberangkatan</label
+              >
+              <input
+                type="month"
+                value="2026-12"
+                class="w-full px-3 py-2 rounded-xl bg-white border border-lineWarm focus:outline-none focus:border-brandOrange"
+              />
+            </div>
+            <div>
+              <label class="block font-semibold text-ink mb-1"
+                >Durasi Trip</label
+              >
+              <select
+                class="w-full px-3 py-2.5 rounded-xl bg-white border border-lineWarm focus:outline-none focus:border-brandOrange"
+              >
+                <option>4 Hari 3 Malam</option>
+                <option>7 Hari 6 Malam</option>
+                <option>10+ Hari Eksplorasi</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold text-ink mb-1">Email Anda</label>
+            <input
+              type="email"
+              required
+              placeholder="traveler@hiddenwonders.id"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-lineWarm focus:outline-none focus:border-brandOrange"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-3 rounded-full bg-brandOrange hover:bg-brandOrange-hover text-white font-semibold shadow-lg shadow-brandOrange/25 transition"
+          >
+            Kirim Rencana Perjalanan
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= ARTICLE / STORY READER MODAL ================= -->
+    <div
+      id="story-modal"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-cream rounded-3xl overflow-hidden max-w-xl w-full shadow-2xl border border-lineWarm relative max-h-[88vh] flex flex-col"
+      >
+        <div class="relative h-56 sm:h-64 shrink-0">
+          <img
+            id="story-modal-img"
+            src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85"
+            alt="Story Cover"
+            class="w-full h-full object-cover"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"
+          ></div>
+          <button
+            onclick="closeStoryModal()"
+            class="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/50 text-white hover:bg-brandOrange transition flex items-center justify-center"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+          <div class="absolute bottom-4 left-6 right-6 text-white">
+            <span
+              id="story-modal-tag"
+              class="px-2.5 py-0.5 rounded-full bg-brandOrange text-[10px] font-bold uppercase tracking-wider"
+              >Food and Drink</span
+            >
+            <h3
+              id="story-modal-title"
+              class="font-serif-editorial text-xl sm:text-2xl font-bold mt-1.5 leading-snug"
+            >
+              Judul Artikel
+            </h3>
+            <p id="story-modal-meta" class="text-[11px] text-gray-200 mt-1">
+              Aug 14, 2026 • 5 min read
+            </p>
+          </div>
+        </div>
+        <div
+          class="p-6 overflow-y-auto space-y-3 text-xs sm:text-sm text-muted leading-relaxed"
+        >
+          <p id="story-modal-body" class="text-ink font-medium"></p>
+          <p>
+            Kepulauan Indonesia menyimpan ribuan kisah autentik yang memadukan
+            lanskap vulkanik, hutan hujan tropis, dan keramahan budaya pesisir.
+            Setiap destinasi menghadirkan cita rasa rempah serta arsitektur
+            warisan leluhur yang tak tergantikan.
+          </p>
+          <div
+            class="pt-3 flex items-center justify-between border-t border-lineWarm"
+          >
+            <span class="text-[11px] text-muted"
+              >Ditulis oleh Tim Editorial Hidden Wonders</span
+            >
+            <button
+              onclick="
+                closeStoryModal();
+                toggleTripModal(true);
+              "
+              class="px-4 py-2 rounded-full bg-brandOrange text-white text-xs font-semibold hover:bg-brandOrange-hover transition"
+            >
+              Jelajahi Destinasi Ini →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIDEO MODAL (TREKKER'S HIGHLIGHTS) ================= -->
+    <div
+      id="video-modal"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-ink rounded-3xl overflow-hidden max-w-2xl w-full shadow-2xl border border-white/15"
+      >
+        <div
+          class="px-5 py-3.5 flex items-center justify-between border-b border-white/10 text-white"
+        >
+          <div class="flex items-center space-x-2 text-xs font-semibold">
+            <span
+              class="w-2 h-2 rounded-full bg-brandOrange animate-ping"
+            ></span>
+            <span>Trekker's Highlight Reel — Kepulauan Indonesia Timur</span>
+          </div>
+          <button
+            onclick="toggleVideoModal(false)"
+            class="p-1 rounded-full text-gray-400 hover:text-white"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="relative aspect-video bg-black group">
+          <img
+            src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1200&q=85"
+            alt="Bunaken & Labuan Bajo"
+            class="w-full h-full object-cover opacity-85"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 text-white"
+          >
+            <span
+              class="text-[10px] font-bold uppercase tracking-widest text-brandOrange"
+              >4K HDR Documentary Preview</span
+            >
+            <h4 class="font-serif-editorial text-xl sm:text-2xl font-bold mt-1">
+              Sunset from Labuan Bajo Phinisi & Bunaken Reefs
+            </h4>
+            <p class="text-xs text-gray-300 mt-1 max-w-lg">
+              Rekaman perjalanan Maria Angelica berlayar melintasi perairan
+              Pulau Padar dan menyelam bersama penyu hijau di Taman Nasional
+              Bunaken.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 1. STICKY HEADER / NAVBAR (EXACT MOCKUP + NEW CUSTOM LOGO) ================= -->
+    <header
+      id="navbar"
+      class="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b border-lineWarm/70 transition-all duration-300"
+    >
+      <div
+        class="max-w-[1140px] mx-auto px-4 sm:px-6 h-16 sm:h-[72px] flex items-center justify-between"
+      >
+        <!-- CUSTOM UPLOADED LOGO RECREATION: "Hidden Wonders - Discover Indonesia" -->
+        <a
+          href="#"
+          class="flex items-center group focus:outline-none"
+          aria-label="Hidden Wonders Discover Indonesia"
+        >
+          <svg
+            class="h-11 sm:h-12 w-auto transition-transform duration-300 group-hover:scale-[1.03]"
+            viewBox="0 0 355 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#8B735B" />
+                <stop offset="55%" stop-color="#C9A882" />
+                <stop offset="100%" stop-color="#F3C78B" />
+              </linearGradient>
+              <clipPath id="pinCircleClip">
+                <circle cx="54" cy="44" r="27" />
+              </clipPath>
+            </defs>
+
+            <!-- Map Pin Base Shape -->
+            <path
+              d="M54 94 C54 94 20 66 20 42 C20 23.2 35.2 8 54 8 C72.8 8 88 23.2 88 42 C88 66 54 94 54 94 Z"
+              fill="#5E3A24"
+            />
+            <!-- Outer Orange Pin Ring -->
+            <path
+              d="M54 8 C35.2 8 20 23.2 20 42 C20 57 36 76 47 87 C40 75 26 58 26 43 C26 27.5 38.5 15 54 15 C69.5 15 82 27.5 82 43 C82 56 71 71 62 82 C74 71 88 55 88 42 C88 23.2 72.8 8 54 8 Z"
+              fill="#E8702A"
+            />
+
+            <!-- Inner Scenic Circle (Clipped) -->
+            <g clip-path="url(#pinCircleClip)">
+              <!-- Misty Warm Sky -->
+              <rect x="24" y="14" width="60" height="60" fill="url(#skyGrad)" />
+              <!-- Rising Orange Sun -->
+              <circle cx="71" cy="44" r="9.5" fill="#E8702A" />
+              <!-- Distant Mountain Ridges -->
+              <path
+                d="M24 62 L44 43 L63 57 L78 46 L88 58 L88 74 L24 74 Z"
+                fill="#C49A6C"
+                opacity="0.85"
+              />
+              <path
+                d="M24 66 L38 52 L56 63 L72 49 L88 62 L88 74 L24 74 Z"
+                fill="#8C5836"
+              />
+
+              <!-- Balinese Meru Pagoda / Temple Silhouette (Left) -->
+              <g fill="#4A2C18">
+                <!-- Base & body -->
+                <rect x="37" y="55" width="12" height="16" />
+                <!-- Tier 1 (Bottom Roof) -->
+                <path d="M31 56 L43 51 L55 56 L52 57.5 L34 57.5 Z" />
+                <!-- Tier 2 -->
+                <path d="M32.5 50.5 L43 46 L53.5 50.5 L51 52 L35 52 Z" />
+                <!-- Tier 3 -->
+                <path d="M34 45 L43 41 L52 45 L49.5 46.5 L36.5 46.5 Z" />
+                <!-- Tier 4 -->
+                <path d="M36 40 L43 36.5 L50 40 L48 41.2 L38 41.2 Z" />
+                <!-- Tier 5 -->
+                <path d="M38 35.2 L43 32 L48 35.2 L46.5 36.2 L39.5 36.2 Z" />
+                <!-- Spire -->
+                <path d="M42.2 26 L43.8 26 L44.5 33 L41.5 33 Z" />
+                <!-- Small side shrine -->
+                <rect x="52" y="58" width="5" height="9" />
+                <path d="M50 58.5 L54.5 55.5 L59 58.5 Z" />
+              </g>
+
+              <!-- Flying Birds -->
+              <path
+                d="M55 34 Q57.5 31.5 60 34 Q62.5 31.5 65 34"
+                stroke="#4A2C18"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                fill="none"
+              />
+              <path
+                d="M62 29 Q64 27 66 29 Q68 27 70 29"
+                stroke="#4A2C18"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                fill="none"
+              />
+            </g>
+
+            <!-- Dynamic Orange Swooshes Wrapping Bottom of Pin -->
+            <path
+              d="M16 49 C10 64 26 72 48 66 C62 62 73 65 79 71 C72 62 60 58 46 62 C27 67 16 60 16 49 Z"
+              fill="#E8702A"
+            />
+            <path
+              d="M27 69 C41 64 59 64 74 75"
+              stroke="#23140C"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            />
+
+            <!-- Swoosh Trail & Airplane Flying Top-Right -->
+            <path
+              d="M72 30 Q92 21 112 16"
+              stroke="#8C5836"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-dasharray="2 2"
+            />
+            <g transform="translate(115, 7) rotate(-18)">
+              <path
+                d="M0 10 L22 6 L26 7.5 L16 12 L21 19 L18 20 L10 13.5 L3 15 L1 12 Z"
+                fill="#5E3A24"
+              />
+              <path d="M9 9 L4 2 L7 1.5 L14 8 Z" fill="#5E3A24" />
+            </g>
+
+            <!-- Brand Text: "Hidden" -->
+            <text
+              x="105"
+              y="45"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-weight="800"
+              font-size="33"
+              fill="#5E3A24"
+              letter-spacing="-0.5"
+            >
+              Hidden
+            </text>
+
+            <!-- Brand Text: "Wonders" -->
+            <text
+              x="98"
+              y="75"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-weight="800"
+              font-size="38"
+              fill="#E8702A"
+              letter-spacing="-0.8"
+            >
+              Wonders
+            </text>
+
+            <!-- Three Orange Burst Rays on Top Right of 's' -->
+            <path
+              d="M275 45 L278 34"
+              stroke="#E8702A"
+              stroke-width="3.5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M281 49 L290 41"
+              stroke="#E8702A"
+              stroke-width="3.5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M284 55 L295 53"
+              stroke="#E8702A"
+              stroke-width="3.5"
+              stroke-linecap="round"
+            />
+
+            <!-- Subtitle: "--- Discover Indonesia ---" -->
+            <line
+              x1="98"
+              y1="89"
+              x2="128"
+              y2="89"
+              stroke="#5E3A24"
+              stroke-width="1"
+              opacity="0.7"
+            />
+            <text
+              x="135"
+              y="92.5"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-weight="600"
+              font-size="10.5"
+              fill="#5E3A24"
+              letter-spacing="2.8"
+            >
+              Discover Indonesia
+            </text>
+            <line
+              x1="274"
+              y1="89"
+              x2="304"
+              y2="89"
+              stroke="#5E3A24"
+              stroke-width="1"
+              opacity="0.7"
+            />
+          </svg>
+        </a>
+
+        <!-- Center Navigation Links (Matching Mockup: Destinations, Travel Styles, Inspiration, Gear, Blog) -->
+        <nav
+          class="hidden lg:flex items-center space-x-7 text-[12px] font-medium text-ink/80"
+        >
+          <a href="#destinations" class="hover:text-brandOrange transition py-1"
+            >Destinations</a
+          >
+          <a
+            href="#destinations"
+            onclick="filterDestinations('bali-nt', null)"
+            class="hover:text-brandOrange transition py-1"
+            >Travel Styles</a
+          >
+          <a href="#stories" class="hover:text-brandOrange transition py-1"
+            >Inspiration</a
+          >
+          <a href="#highlights" class="hover:text-brandOrange transition py-1"
+            >Highlights</a
+          >
+          <a href="#stories" class="hover:text-brandOrange transition py-1"
+            >Blog</a
+          >
+        </nav>
+
+        <!-- Right Actions: Search + Dark Pill Sign In + Mobile Menu Button -->
+        <div class="flex items-center space-x-3">
+          <button
+            onclick="toggleSearchModal(true)"
+            class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-ink/80 hover:text-brandOrange hover:bg-creamDark/70 transition"
+            aria-label="Search"
+          >
+            <i data-lucide="search" class="w-4 h-4"></i>
+            <span class="hidden sm:inline text-[12px]">Search</span>
+          </button>
+
+          <button
+            onclick="toggleTripModal(true)"
+            class="hidden sm:inline-flex px-4 py-1.5 rounded-full bg-ink text-white text-[12px] font-semibold hover:bg-brandOrange transition shadow-sm"
+          >
+            Sign in
+          </button>
+
+          <button
+            onclick="toggleMobileDrawer()"
+            class="lg:hidden p-1.5 rounded-lg text-ink hover:bg-creamDark transition"
+            aria-label="Toggle Menu"
+          >
+            <i data-lucide="menu" id="mobile-menu-icon" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Drawer -->
+      <div
+        id="mobile-drawer"
+        class="hidden lg:hidden bg-cream border-b border-lineWarm px-6 py-5 space-y-3 text-sm font-medium shadow-xl"
+      >
+        <a
+          href="#destinations"
+          onclick="toggleMobileDrawer()"
+          class="flex items-center justify-between py-1.5 hover:text-brandOrange"
+        >
+          <span>Destinations</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i>
+        </a>
+        <a
+          href="#destinations"
+          onclick="toggleMobileDrawer()"
+          class="flex items-center justify-between py-1.5 hover:text-brandOrange"
+        >
+          <span>Travel Styles</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i>
+        </a>
+        <a
+          href="#stories"
+          onclick="toggleMobileDrawer()"
+          class="flex items-center justify-between py-1.5 hover:text-brandOrange"
+        >
+          <span>Latest Stories</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i>
+        </a>
+        <a
+          href="#highlights"
+          onclick="toggleMobileDrawer()"
+          class="flex items-center justify-between py-1.5 hover:text-brandOrange"
+        >
+          <span>Trekker's Highlights</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i>
+        </a>
+        <div class="pt-2">
+          <button
+            onclick="
+              toggleTripModal(true);
+              toggleMobileDrawer();
+            "
+            class="w-full py-2.5 rounded-full bg-brandOrange text-white text-xs font-semibold shadow-md"
+          >
+            Plan your trip
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= 2. HERO SECTION (1:1 DESKTOP & MOBILE MOCKUP LAYOUT) ================= -->
+    <section class="relative pt-6 pb-14 md:pt-12 md:pb-20 overflow-hidden">
+      <!-- Subtle World/Archipelago Map Silhouette Watermark in Background -->
+      <div
+        class="absolute inset-0 pointer-events-none opacity-[0.045] flex items-center justify-center"
+      >
+        <svg
+          class="w-full max-w-5xl h-auto"
+          viewBox="0 0 1000 450"
+          fill="#5E3A24"
+        >
+          <path
+            d="M120,180 Q150,150 200,170 T290,190 T380,160 T460,210 T560,180 T670,200 T790,170 T890,210 L910,270 Q830,300 720,260 T540,280 T350,250 T180,270 Z"
+          />
+          <circle cx="310" cy="220" r="45" />
+          <circle cx="520" cy="195" r="60" />
+          <circle cx="710" cy="235" r="50" />
+        </svg>
+      </div>
+
+      <div class="max-w-[1140px] mx-auto px-4 sm:px-6 relative z-10">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center"
+        >
+          <!-- LEFT HERO TEXT COLUMN (5 Cols on Desktop) -->
+          <div class="lg:col-span-5 space-y-4 sm:space-y-5 reveal-left active">
+            <h1
+              class="font-serif-editorial text-[34px] sm:text-[44px] lg:text-[48px] font-bold text-ink leading-[1.12] tracking-tight"
+            >
+              Discover the <br />
+              World's
+              <span
+                class="relative inline-block text-brandOrange italic font-normal"
+              >
+                Hidden
+                <!-- Wavy hand-drawn underline matching mockup -->
+                <svg
+                  class="w-full h-2.5 absolute -bottom-1 left-0 text-brandOrange/70"
+                  viewBox="0 0 120 12"
+                  fill="none"
+                >
+                  <path
+                    d="M2 8 Q 30 2, 60 7 T 118 5"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+              <br />
+              Wonders
+            </h1>
+
+            <p
+              class="text-muted text-xs sm:text-[13.5px] leading-[1.65] max-w-md"
+            >
+              Temukan momen unik dan permata tersembunyi di seluruh kepulauan
+              Indonesia yang memantik pengalaman tak terlupakan. Dari perjumpaan
+              budaya langka hingga lanskap vulkanik dan laut karang yang luar
+              biasa, kami membantumu merangkai kisah perjalanan yang abadi.
+            </p>
+
+            <!-- Desktop CTA Button + Curving Dashed Flight Path to Collage -->
+            <div class="hidden lg:block pt-2 relative">
+              <button
+                onclick="toggleTripModal(true)"
+                class="px-7 py-3 rounded-full bg-brandOrange hover:bg-brandOrange-hover text-white text-xs font-semibold shadow-lg shadow-brandOrange/25 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                Plan your trip
+              </button>
+
+              <!-- Exact Mockup Curving Dashed Trail & Airplane Under Hero Text -->
+              <svg
+                class="w-[380px] h-[95px] -mt-3 ml-6 pointer-events-none overflow-visible"
+                viewBox="0 0 380 95"
+                fill="none"
+              >
+                <!-- Loop curve path matching mockup -->
+                <path
+                  class="flight-dash"
+                  d="M 10 18 C 70 68, 155 72, 185 38 C 205 16, 165 5, 155 28 C 145 52, 240 78, 345 48"
+                  stroke="#E8702A"
+                  stroke-width="1.4"
+                  opacity="0.65"
+                  fill="none"
+                />
+                <!-- Coral Airplane Icon at End of Path -->
+                <g
+                  class="animate-float"
+                  transform="translate(342, 34) rotate(-18)"
+                >
+                  <path
+                    d="M2 11 L22 4 L17 14 L23 20 L19 21 L12 15 L6 18 L5 14 L0 12 Z"
+                    fill="#E8702A"
+                  />
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- RIGHT HERO ASYMMETRIC 3-PHOTO COLLAGE (7 Cols on Desktop, Full on Mobile) -->
+          <div class="lg:col-span-7 relative reveal-right active delay-150">
+            <!-- Subtle Decorative Stamp Behind Collage -->
+            <div
+              class="hidden sm:flex absolute -top-6 left-[42%] w-24 h-24 rounded-full border border-dashed border-brandBrown/20 items-center justify-center pointer-events-none"
+            >
+              <i data-lucide="compass" class="w-8 h-8 text-brandBrown/15"></i>
+            </div>
+
+            <div class="grid grid-cols-12 gap-3.5 sm:gap-5 items-center">
+              <!-- Left Tall Portrait Card (Borobudur Temple Sunrise) -->
+              <div class="col-span-6 sm:mt-8">
+                <div
+                  onclick="
+                    openStoryModal(
+                      'Warisan Dunia UNESCO',
+                      'Magisnya Kabut Fajar di Candi Borobudur, Jawa Tengah',
+                      'Aug 16, 2026 • 4 min read',
+                      'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=900&q=85',
+                      'Menyaksikan matahari terbit menyinari stupa-stupa kuno Candi Borobudur dengan latar Gunung Merapi dan Merbabu yang diselimuti kabut keemasan.',
+                    )
+                  "
+                  class="card-interactive cursor-pointer relative aspect-[3/4.1] rounded-2xl sm:rounded-3xl overflow-hidden shadow-md border border-lineWarm group"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=900&q=85"
+                    alt="Candi Borobudur Sunrise"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent opacity-90"
+                  ></div>
+                  <div
+                    class="absolute bottom-3.5 left-3.5 right-3.5 text-white"
+                  >
+                    <span
+                      class="px-2 py-0.5 rounded-full bg-brandOrange/90 text-[9px] font-bold uppercase tracking-wider"
+                      >Jawa Tengah</span
+                    >
+                    <h4
+                      class="font-serif-editorial text-sm sm:text-base font-bold mt-1"
+                    >
+                      Candi Borobudur
+                    </h4>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right 2 Stacked Cards (Raja Ampat & Wae Rebo Village) -->
+              <div class="col-span-6 space-y-3.5 sm:space-y-5">
+                <!-- Top Right Card: Raja Ampat -->
+                <div
+                  onclick="
+                    openStoryModal(
+                      'Surga Bahari Papua',
+                      'Menjelajahi Gugusan Karst Raja Ampat dari Puncak Piaynemo',
+                      'Aug 15, 2026 • 6 min read',
+                      'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=700&q=85',
+                      'Gradasi air laut biru toska yang mengelilingi pulau-pulau karang hijau menjadikan Raja Ampat pusat keanekaragaman hayati laut terkaya di bumi.',
+                    )
+                  "
+                  class="card-interactive cursor-pointer relative aspect-[4/3.4] rounded-2xl sm:rounded-3xl overflow-hidden shadow-md border border-lineWarm group"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=700&q=85"
+                    alt="Raja Ampat Islands"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                  ></div>
+                  <div class="absolute bottom-3 left-3.5 right-3.5 text-white">
+                    <span
+                      class="text-[9px] uppercase tracking-wider text-amber-300 font-bold"
+                      >Papua Barat Daya</span
+                    >
+                    <h4
+                      class="font-serif-editorial text-xs sm:text-sm font-bold"
+                    >
+                      Kepulauan Raja Ampat
+                    </h4>
+                  </div>
+                </div>
+
+                <!-- Bottom Right Card: Wae Rebo Traditional Village -->
+                <div
+                  onclick="
+                    openStoryModal(
+                      'Desa di Atas Awan',
+                      'Menginap di Mbaru Niang, Rumah Adat Kerucut Wae Rebo Flores',
+                      'Aug 11, 2026 • 5 min read',
+                      'https://images.unsplash.com/photo-1570789210967-2cac24afeb00?auto=format&fit=crop&w=700&q=85',
+                      'Terletak di ketinggian 1.200 meter di atas permukaan laut, tujuh rumah adat Mbaru Niang menyambut pejalan kaki dengan kopi Flores hangat dan tradisi leluhur Manggarai.',
+                    )
+                  "
+                  class="card-interactive cursor-pointer relative aspect-[4/3.4] rounded-2xl sm:rounded-3xl overflow-hidden shadow-md border border-lineWarm group"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1570789210967-2cac24afeb00?auto=format&fit=crop&w=700&q=85"
+                    alt="Desa Adat Wae Rebo Flores"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                  ></div>
+                  <div class="absolute bottom-3 left-3.5 right-3.5 text-white">
+                    <span
+                      class="text-[9px] uppercase tracking-wider text-amber-300 font-bold"
+                      >Flores, NTT</span
+                    >
+                    <h4
+                      class="font-serif-editorial text-xs sm:text-sm font-bold"
+                    >
+                      Desa Adat Wae Rebo
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MOBILE HERO CTA BUTTON (Matches Right-Side Mobile Mockup Exactly: Centered Below Collage) -->
+            <div class="mt-6 flex flex-col items-center lg:hidden">
+              <button
+                onclick="toggleTripModal(true)"
+                class="w-full sm:w-auto min-w-[210px] py-3 px-8 rounded-full bg-brandOrange hover:bg-brandOrange-hover text-white text-xs font-semibold shadow-lg shadow-brandOrange/25 transition"
+              >
+                Plan your trip
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. TOP DESTINATIONS SECTION (EXACT MOCKUP CAPTIONS BELOW CARDS) ================= -->
+    <section id="destinations" class="py-10 sm:py-14">
+      <div class="max-w-[1140px] mx-auto px-4 sm:px-6">
+        <!-- Section Heading -->
+        <div class="reveal">
+          <h2
+            class="font-serif-editorial text-2xl sm:text-[28px] font-bold text-ink tracking-tight"
+          >
+            Top Destinations
+          </h2>
+        </div>
+
+        <!-- Filter Bar Row: Category Tabs on Left + "Explore all destinations" Pill on Right -->
+        <div
+          class="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-lineWarm/80 pb-3 reveal delay-75"
+        >
+          <!-- Mobile Filter Dropdown (Matches Mobile Mockup "Popular ▾") -->
+          <div class="sm:hidden flex items-center justify-between">
+            <div class="relative inline-block">
+              <select
+                onchange="filterDestinations(this.value, null)"
+                class="appearance-none bg-transparent font-bold text-xs text-ink pr-5 py-1 focus:outline-none"
+              >
+                <option value="all">Popular</option>
+                <option value="jawa">Jawa</option>
+                <option value="bali-nt">Bali & Nusa Tenggara</option>
+                <option value="papua">Papua & Maluku</option>
+                <option value="sulawesi">Sulawesi</option>
+                <option value="sumatera">Sumatera</option>
+              </select>
+              <i
+                data-lucide="chevron-down"
+                class="w-3.5 h-3.5 absolute right-0 top-1.5 pointer-events-none text-ink"
+              ></i>
+            </div>
+          </div>
+
+          <!-- Desktop Horizontal Category Tabs -->
+          <div
+            class="hidden sm:flex items-center space-x-5 overflow-x-auto no-scrollbar text-[12px] font-medium text-muted"
+          >
+            <button
+              onclick="filterDestinations('all', this)"
+              class="dest-tab text-ink font-bold border-b-2 border-ink pb-1 transition"
+            >
+              Popular
+            </button>
+            <button
+              onclick="filterDestinations('jawa', this)"
+              class="dest-tab hover:text-ink pb-1 transition"
+            >
+              Jawa
+            </button>
+            <button
+              onclick="filterDestinations('bali-nt', this)"
+              class="dest-tab hover:text-ink pb-1 transition"
+            >
+              Bali & Nusa Tenggara
+            </button>
+            <button
+              onclick="filterDestinations('papua', this)"
+              class="dest-tab hover:text-ink pb-1 transition"
+            >
+              Papua
+            </button>
+            <button
+              onclick="filterDestinations('sumatera', this)"
+              class="dest-tab hover:text-ink pb-1 transition"
+            >
+              Sumatera
+            </button>
+            <button
+              onclick="filterDestinations('sulawesi', this)"
+              class="dest-tab hover:text-ink pb-1 transition"
+            >
+              Sulawesi
+            </button>
+            <button
+              onclick="filterDestinations('all', this)"
+              class="dest-tab hover:text-ink pb-1 transition flex items-center"
+            >
+              More <i data-lucide="chevron-down" class="w-3 h-3 ml-0.5"></i>
+            </button>
+          </div>
+
+          <!-- Desktop Right Outline Pill Button -->
+          <button
+            onclick="resetAndShowAllDestinations()"
+            class="hidden sm:inline-flex items-center px-4 py-1.5 rounded-full border border-ink/25 hover:border-ink text-[11px] font-semibold text-ink hover:bg-ink hover:text-white transition shrink-0"
+          >
+            Explore all destinations
+          </button>
+        </div>
+
+        <!-- 4 Tall Vertical Portrait Cards Grid (With Clean Captions Underneath Matching Mockup) -->
+        <div
+          id="destinations-grid"
+          class="destination-track mt-6 py-2"
+          role="region"
+          aria-label="Top destinations carousel"
+          tabindex="0"
+        >
+          <!-- Card 1: Gunung Bromo -->
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal delay-75"
+            data-category="jawa"
+            onclick="
+              openStoryModal(
+                'Jawa Timur',
+                'Gunung Bromo & Kaldera Tengger Saat Matahari Terbit',
+                'Populer Sepanjang Tahun',
+                'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=800&q=85',
+                'Menjelajahi lautan pasir berbisik dengan jeep 4x4 menuju Penanjakan untuk menyaksikan siluet Gunung Bromo, Batok, dan Semeru di ufuk timur.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=800&q=85"
+                alt="Gunung Bromo, Jawa Timur"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Gunung Bromo, Tengger
+              </h3>
+              <p class="text-[11.5px] text-muted">Jawa Timur</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Kelingking Beach, Nusa Penida -->
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal delay-150"
+            data-category="bali-nt"
+            onclick="
+              openStoryModal(
+                'Bali Kepulauan',
+                'Pantai Kelingking & Tebing Karst Nusa Penida',
+                'Destinasi Ikonik Bali',
+                'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85',
+                'Formasi tebing kapur megah menyerupai T-Rex yang menjorok ke samudra biru jernih dengan pasir putih tersembunyi di bawahnya.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85"
+                alt="Kelingking Beach Nusa Penida"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Kelingking Beach, Nusa Penida
+              </h3>
+              <p class="text-[11.5px] text-muted">Bali</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Pulau Padar, Labuan Bajo -->
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal delay-225"
+            data-category="bali-nt"
+            onclick="
+              openStoryModal(
+                'Taman Nasional Komodo',
+                'Panorama Tiga Teluk Eksotis dari Puncak Pulau Padar',
+                'Warisan Alam Nusantara',
+                'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=85',
+                'Pendakian singkat menuju puncak bukit Pulau Padar menyuguhkan pemandangan tiga teluk berpasir putih, hitam, dan merah muda yang langka di dunia.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=85"
+                alt="Pulau Padar Labuan Bajo"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Pulau Padar, Labuan Bajo
+              </h3>
+              <p class="text-[11.5px] text-muted">Nusa Tenggara Timur</p>
+            </div>
+          </div>
+
+          <!-- Card 4: Danau Toba / Raja Ampat -->
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal delay-300"
+            data-category="papua sumatera sulawesi"
+            onclick="
+              openStoryModal(
+                'Keajaiban Kaldera & Bahari',
+                'Puncak Wayag & Kaldera Danau Toba yang Megah',
+                'Eksplorasi Nusantara',
+                'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=85',
+                'Menyusuri perairan jernih kepulauan nusantara yang memadukan ketenangan danau vulkanik terbesar serta terumbu karang kelas dunia.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=85"
+                alt="Laguna Karst Raja Ampat"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Laguna Wayag, Raja Ampat
+              </h3>
+              <p class="text-[11.5px] text-muted">Papua Barat Daya</p>
+            </div>
+          </div>
+
+          <!-- New destination photos -->
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal"
+            data-category="papua"
+            onclick="
+              openStoryModal(
+                'Papua Barat Daya',
+                'Misool, Raja Ampat',
+                'Papua Barat Daya',
+                'foto 1.png',
+                'Laguna biru dan gugusan karst Misool di Raja Ampat, Papua Barat Daya.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="foto 1.png"
+                alt="Laguna karst Misool di Raja Ampat"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Misool, Raja Ampat
+              </h3>
+              <p class="text-[11.5px] text-muted">Papua Barat Daya</p>
+            </div>
+          </div>
+
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal"
+            data-category="sulawesi"
+            onclick="
+              openStoryModal(
+                'Sulawesi Tengah',
+                'Kepulauan Togean',
+                'Sulawesi Tengah',
+                'foto 2.png',
+                'Perairan jernih dan pesisir hijau Kepulauan Togean, Sulawesi Tengah.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="foto 2.png"
+                alt="Pesisir dan dermaga di Kepulauan Togean"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Kepulauan Togean
+              </h3>
+              <p class="text-[11.5px] text-muted">Sulawesi Tengah</p>
+            </div>
+          </div>
+
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal"
+            data-category="sulawesi"
+            onclick="
+              openStoryModal(
+                'Gorontalo',
+                'Pulo Cinta',
+                'Gorontalo, Sulawesi',
+                'foto 3.png',
+                'Resor di atas laut dengan pulau berbentuk hati di Pulo Cinta, Gorontalo.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="foto 3.png"
+                alt="Pulau berbentuk hati dan vila laut di Pulo Cinta"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Pulo Cinta, Gorontalo
+              </h3>
+              <p class="text-[11.5px] text-muted">Gorontalo, Sulawesi</p>
+            </div>
+          </div>
+
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal"
+            data-category="sumatera"
+            onclick="
+              openStoryModal(
+                'Bangka Belitung',
+                'Pantai Tanjung Tinggi',
+                'Bangka Belitung, Sumatera',
+                'foto 4.png',
+                'Batu granit besar dan suasana matahari terbenam di Pantai Tanjung Tinggi, Belitung.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="foto 4.png"
+                alt="Batu granit di Pantai Tanjung Tinggi, Belitung"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Pantai Tanjung Tinggi
+              </h3>
+              <p class="text-[11.5px] text-muted">Belitung, Bangka Belitung</p>
+            </div>
+          </div>
+
+          <div
+            class="dest-item destination-slide group cursor-pointer reveal"
+            data-category="sumatera"
+            onclick="
+              openStoryModal(
+                'Sumatera Barat',
+                'Kepulauan Mentawai',
+                'Sumatera Barat',
+                'foto 5.png',
+                'Garis pantai berpasir putih dan hutan kelapa di Kepulauan Mentawai, Sumatera Barat.',
+              )
+            "
+          >
+            <div
+              class="card-interactive aspect-[3/3.8] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm"
+            >
+              <img
+                src="foto 5.png"
+                alt="Pantai dan hutan kelapa di Kepulauan Mentawai"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="mt-2.5 px-0.5">
+              <h3
+                class="text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition"
+              >
+                Kepulauan Mentawai
+              </h3>
+              <p class="text-[11.5px] text-muted">Sumatera Barat</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-4 flex justify-end gap-2"
+          aria-label="Destination carousel controls"
+        >
+          <button
+            type="button"
+            onclick="scrollDestinations(-1)"
+            aria-label="Scroll destinations left"
+            title="Previous destinations"
+            class="w-11 h-11 inline-flex items-center justify-center rounded-full border border-ink/20 bg-white text-ink hover:border-brandOrange hover:text-brandOrange transition"
+          >
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <button
+            type="button"
+            onclick="scrollDestinations(1)"
+            aria-label="Scroll destinations right"
+            title="Next destinations"
+            class="w-11 h-11 inline-flex items-center justify-center rounded-full border border-ink/20 bg-white text-ink hover:border-brandOrange hover:text-brandOrange transition"
+          >
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Mobile "Explore all destinations" Pill Button Below Cards (Matches Mobile Mockup) -->
+        <div class="mt-6 flex justify-center sm:hidden">
+          <button
+            onclick="resetAndShowAllDestinations()"
+            class="w-full max-w-xs py-2.5 px-6 rounded-full border border-ink/30 text-xs font-semibold text-ink hover:bg-ink hover:text-white transition"
+          >
+            Explore all destinations
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 4. LATEST STORIES SECTION (1:1 MOCKUP ASYMMETRIC GRID) ================= -->
+    <section id="stories" class="py-10 sm:py-14">
+      <div class="max-w-[1140px] mx-auto px-4 sm:px-6">
+        <!-- Header Row -->
+        <div class="flex items-center justify-between mb-6 reveal">
+          <h2
+            class="font-serif-editorial text-2xl sm:text-[28px] font-bold text-ink tracking-tight"
+          >
+            Latest Stories
+          </h2>
+          <button
+            onclick="
+              showToast(
+                'Jurnal Perjalanan',
+                'Menampilkan seluruh cerita perjalanan Nusantara terbaru.',
+              )
+            "
+            class="hidden sm:inline-flex items-center px-4 py-1.5 rounded-full border border-ink/25 hover:border-ink text-[11px] font-semibold text-ink hover:bg-ink hover:text-white transition"
+          >
+            Read more articles
+          </button>
+        </div>
+
+        <!-- 12-Column Asymmetric Grid: Left 7 Cols Featured Story, Right 5 Cols 3 Stacked Stories -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- LEFT FEATURED STORY (7 Cols) -->
+          <article
+            onclick="
+              openStoryModal(
+                'Food and Drink',
+                'Panduan Kuliner Pesisir Bali & Lombok: 10 Hidangan Autentik yang Wajib Dicoba',
+                'Aug 12, 2026 • 4 min read',
+                'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85',
+                'Rasanya hampir setiap kepenatan bisa disembuhkan dengan perpaduan kelapa muda dingin di tepi pantai Uluwatu, sate lilit hangat, dan ayam taliwang bakar khas pesisir Lombok.',
+              )
+            "
+            class="lg:col-span-7 group cursor-pointer reveal-left"
+          >
+            <div
+              class="card-interactive aspect-[16/10] w-full rounded-2xl overflow-hidden bg-creamDark border border-lineWarm mb-3.5"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85"
+                alt="Kuliner Pesisir Tropis Bali"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <span class="text-[11px] font-bold text-storyTag"
+                >Food and Drink</span
+              >
+              <h3
+                class="font-serif-editorial text-lg sm:text-[21px] font-bold text-ink group-hover:text-brandOrange transition leading-snug"
+              >
+                Panduan kuliner pesisir Bali & Lombok: 10 hidangan autentik yang
+                wajib dicoba
+              </h3>
+              <p class="text-[11px] text-muted">Aug 12, 2026 • 4 min read</p>
+              <p class="text-xs text-muted leading-relaxed pt-0.5 line-clamp-2">
+                Rasanya di pulau tropis Indonesia, hampir setiap kepenatan dapat
+                disembuhkan dengan perpaduan kelapa muda segar di tepi tebing
+                laut, rempah bakar tradisional, dan keramahan warung lokal...
+              </p>
+            </div>
+          </article>
+
+          <!-- RIGHT 3 STACKED HORIZONTAL STORIES (5 Cols) -->
+          <div class="lg:col-span-5 flex flex-col space-y-5">
+            <!-- Small Story 1: Shopping / Pasar Terapung -->
+            <article
+              onclick="
+                openStoryModal(
+                  'Shopping & Culture',
+                  '15 Pasar Tradisional & Pasar Terapung Paling Ikonik di Indonesia',
+                  'Aug 15, 2026 • 6 min read',
+                  'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=600&q=80',
+                  'Dari warna-warni jukung di Pasar Terapung Lok Baintan Kalimantan Selatan hingga kerajinan rotan dan tenun ikat di Pasar Seni Ubud dan Yogyakarta.',
+                )
+              "
+              class="flex items-start space-x-3.5 group cursor-pointer reveal-right delay-75"
+            >
+              <div
+                class="w-24 h-24 sm:w-28 sm:h-24 rounded-2xl overflow-hidden bg-creamDark border border-lineWarm shrink-0"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=500&q=80"
+                  alt="Pasar Budaya Nusantara"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10.5px] font-bold text-storyTag"
+                  >Shopping</span
+                >
+                <h4
+                  class="text-xs sm:text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition leading-snug"
+                >
+                  15 Pasar Tradisional & Terapung Nusantara: Dari Lok Baintan
+                  hingga Ubud
+                </h4>
+                <p class="text-[10.5px] text-muted">
+                  Aug 15, 2026 • 6 min read
+                </p>
+              </div>
+            </article>
+
+            <!-- Small Story 2: Hotels / Bamboo Eco-Resort -->
+            <article
+              onclick="
+                openStoryModal(
+                  'Hotels & Eco-Resorts',
+                  '10 Resort Bambu & Eco-Lodge Terbaik di Sumba dan Bali untuk Liburan 2026',
+                  'Aug 10, 2026 • 5 min read',
+                  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
+                  'Menginap di vila bambu ramah lingkungan dengan infinity pool yang menghadap langsung ke lembah hijau Sidemen dan bukit savana Sumba.',
+                )
+              "
+              class="flex items-start space-x-3.5 group cursor-pointer reveal-right delay-150"
+            >
+              <div
+                class="w-24 h-24 sm:w-28 sm:h-24 rounded-2xl overflow-hidden bg-creamDark border border-lineWarm shrink-0"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=500&q=80"
+                  alt="Eco Resort Sumba Bali"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10.5px] font-bold text-storyTag"
+                  >Hotels</span
+                >
+                <h4
+                  class="text-xs sm:text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition leading-snug"
+                >
+                  10 Eco-resort bambu spektakuler di Sumba dan Bali yang wajib
+                  masuk bucket list
+                </h4>
+                <p class="text-[10.5px] text-muted">
+                  Aug 10, 2026 • 5 min read
+                </p>
+              </div>
+            </article>
+
+            <!-- Small Story 3: Travel Budget / Yogyakarta -->
+            <article
+              onclick="
+                openStoryModal(
+                  'Travel Budget',
+                  'Menjelajahi Yogyakarta & Jawa Tengah Hemat Budget: Kuliner & Candi Tersembunyi',
+                  'Aug 02, 2026 • 8 min read',
+                  'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?auto=format&fit=crop&w=600&q=80',
+                  'Tips lengkap keliling kawasan Keraton, angkringan legendaris, hingga deretan candi eksotis di lereng gunung dengan anggaran ramah kantong.',
+                )
+              "
+              class="flex items-start space-x-3.5 group cursor-pointer reveal-right delay-225"
+            >
+              <div
+                class="w-24 h-24 sm:w-28 sm:h-24 rounded-2xl overflow-hidden bg-creamDark border border-lineWarm shrink-0"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1584810359583-96fc3448beaa?auto=format&fit=crop&w=500&q=80"
+                  alt="Yogyakarta Budget Travel"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10.5px] font-bold text-storyTag"
+                  >Travel Budget</span
+                >
+                <h4
+                  class="text-xs sm:text-[13.5px] font-bold text-ink group-hover:text-brandOrange transition leading-snug"
+                >
+                  Keliling Yogyakarta Hemat Budget: Kuliner Autentik dan Spot
+                  Warisan Budaya
+                </h4>
+                <p class="text-[10.5px] text-muted">
+                  Aug 02, 2026 • 8 min read
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Mobile "Read more articles" Pill Button Below Stories (Matches Mobile Mockup) -->
+        <div class="mt-7 flex justify-center sm:hidden">
+          <button
+            onclick="
+              showToast(
+                'Jurnal Perjalanan',
+                'Menampilkan seluruh cerita perjalanan Nusantara terbaru.',
+              )
+            "
+            class="w-full max-w-xs py-2.5 px-6 rounded-full border border-ink/30 text-xs font-semibold text-ink hover:bg-ink hover:text-white transition"
+          >
+            Read more articles
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. TREKKER’S HIGHLIGHTS SECTION (EXACT 3-COLUMN MOCKUP LAYOUT) ================= -->
+    <section id="highlights" class="py-10 sm:py-14">
+      <div class="max-w-[1140px] mx-auto px-4 sm:px-6">
+        <h2
+          class="font-serif-editorial text-2xl sm:text-[28px] font-bold text-ink tracking-tight mb-7 reveal"
+        >
+          Trekker's Highlights
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Column 1 (4 Cols): Reviewer Profile, 5 Stars, Title & Detailed Testimonial -->
+          <div class="lg:col-span-4 space-y-3.5 reveal-left">
+            <div class="flex items-center space-x-3">
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+                alt="Maria Angelica"
+                class="w-11 h-11 rounded-full object-cover border border-lineWarm shadow-sm"
+              />
+              <div>
+                <h4 class="text-xs font-bold text-ink">Maria Angelica</h4>
+                <p class="text-[11px] text-muted">Jakarta, Indonesia</p>
+              </div>
+            </div>
+
+            <!-- 5 Orange/Gold Stars -->
+            <div class="flex items-center space-x-1 text-amber-400">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+
+            <h3 class="text-sm sm:text-[15px] font-bold text-ink leading-snug">
+              An Unforgettable Journey Through East Indonesia
+            </h3>
+
+            <p class="text-[11.5px] text-muted leading-[1.65]">
+              "Terima kasih kepada Hidden Wonders, perjalanan saya melintasi
+              Bukit Merese Lombok, Labuan Bajo, hingga menyelam di Bunaken
+              benar-benar magis. Rute yang disusun memadukan petualangan savana
+              dengan perjumpaan budaya lokal yang hangat. Sudah tidak sabar
+              merencanakan ekspedisi berikutnya ke Banda Neira!"
+            </p>
+          </div>
+
+          <!-- Column 2 (4 Cols): Tall Portrait Photo Card (Traveler at Sunset on Bukit Merese / Bromo) -->
+          <div class="lg:col-span-4 reveal-scale delay-150">
+            <div
+              onclick="
+                openStoryModal(
+                  'Catatan Perjalanan Maria',
+                  'Senja Keemasan di Atas Savana Bukit Merese, Lombok',
+                  'Highlight Pilihan',
+                  'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=85',
+                  'Berdiri di punggung bukit hijau menghadap Samudra Hindia saat angin senja berhembus lembut adalah pengalaman terbaik selama perjalanan di Nusa Tenggara.',
+                )
+              "
+              class="card-interactive cursor-pointer aspect-[4/4.3] rounded-2xl sm:rounded-3xl overflow-hidden bg-creamDark border border-lineWarm shadow-sm group"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=85"
+                alt="Bukit Merese Lombok Traveler"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+          </div>
+
+          <!-- Column 3 (4 Cols): Video Card with Play Button + Caption + "See more highlights" Pill Button -->
+          <div
+            class="lg:col-span-4 flex flex-col justify-between space-y-4 reveal-right delay-225"
+          >
+            <div>
+              <div
+                onclick="toggleVideoModal(true)"
+                class="card-interactive cursor-pointer relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-creamDark border border-lineWarm shadow-sm group"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=700&q=85"
+                  alt="Bunaken & Phinisi Cruise Video"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div
+                  class="absolute inset-0 bg-black/25 group-hover:bg-black/35 transition"
+                ></div>
+
+                <!-- Centered Play Button with Pulse Ring -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div
+                    class="play-pulse relative w-12 h-12 rounded-full bg-black/60 backdrop-blur-sm border border-white/80 flex items-center justify-center text-white group-hover:bg-brandOrange group-hover:border-brandOrange transition duration-300"
+                  >
+                    <i
+                      data-lucide="play"
+                      class="w-5 h-5 fill-white translate-x-0.5"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <p class="text-[11px] font-medium text-muted mt-2 px-1">
+                Diving Bunaken & Labuan Bajo Phinisi Cruise
+              </p>
+            </div>
+
+            <div class="flex justify-start lg:justify-end pt-2">
+              <button
+                onclick="toggleVideoModal(true)"
+                class="px-4 py-1.5 rounded-full border border-ink/25 hover:border-ink text-[11px] font-semibold text-ink hover:bg-ink hover:text-white transition"
+              >
+                See more highlights
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. FULL-WIDTH NEWSLETTER BANNER (EXACT MOCKUP MATCH) ================= -->
+    <section class="mt-8 relative overflow-hidden">
+      <div
+        class="relative min-h-[300px] sm:min-h-[340px] w-full flex items-center justify-center px-4 py-14"
+      >
+        <!-- Scenic Indonesian Savanna / Volcanic Road Background (Baluran & Bromo Golden Hour) -->
+        <img
+          id="newsletter-bg"
+          src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1800&q=85"
+          alt="Taman Nasional Baluran & Kaldera Nusantara"
+          class="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-700"
+        />
+        <!-- Warm Earthy Dark Gradient Overlay matching Mockup Canyon/Savanna Tone -->
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-black/45 via-amber-950/45 to-black/65"
+        ></div>
+
+        <!-- Centered Content -->
+        <div
+          class="relative z-10 max-w-xl mx-auto text-center text-white space-y-5 reveal"
+        >
+          <h2
+            class="font-serif-editorial text-2xl sm:text-4xl font-bold leading-tight drop-shadow-sm"
+          >
+            Get Your Travel Inspiration <br />
+            Straight to Your Inbox
+          </h2>
+
+          <!-- Horizontal Pill Input + Separate Orange Pill Button (Matching Mockup Layout) -->
+          <form
+            onsubmit="handleNewsletterSubmit(event)"
+            class="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto pt-1"
+          >
+            <input
+              type="email"
+              id="sub-email"
+              required
+              placeholder="Email address"
+              class="w-full sm:flex-1 px-5 py-2.5 rounded-full bg-white text-ink placeholder-gray-400 text-xs focus:outline-none focus:ring-2 focus:ring-brandOrange shadow-md"
+            />
+            <button
+              type="submit"
+              class="w-full sm:w-auto px-7 py-2.5 rounded-full bg-brandOrange hover:bg-brandOrange-hover text-white text-xs font-semibold shadow-md transition shrink-0"
+            >
+              Subscribe
+            </button>
+          </form>
+
+          <p class="text-[10.5px] text-gray-200/90">
+            Subscribe to our newsletters and exclusive promotions. Read our
+            <a
+              href="#"
+              onclick="
+                event.preventDefault();
+                showToast(
+                  'Kebijakan Privasi',
+                  'Data email Anda dijamin aman dan bebas spam.',
+                );
+              "
+              class="underline hover:text-white"
+              >Privacy Policy</a
+            >.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 7. FOOTER (5-COLUMN MOCKUP LAYOUT + CUSTOM LOGO) ================= -->
+    <footer class="bg-creamDark border-t border-lineWarm text-ink">
+      <div class="max-w-[1140px] mx-auto px-4 sm:px-6 py-12 sm:py-14">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 text-xs"
+        >
+          <!-- Col 1 & 2 (2 Cols wide on lg): Custom Hidden Wonders SVG Logo + Social Icons -->
+          <div
+            class="col-span-2 sm:col-span-3 lg:col-span-2 flex flex-col justify-between space-y-6"
+          >
+            <div>
+              <!-- Custom SVG Logo in Footer -->
+              <a href="#" class="inline-block">
+                <svg
+                  class="h-12 w-auto"
+                  viewBox="0 0 355 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M54 94 C54 94 20 66 20 42 C20 23.2 35.2 8 54 8 C72.8 8 88 23.2 88 42 C88 66 54 94 54 94 Z"
+                    fill="#5E3A24"
+                  />
+                  <path
+                    d="M54 8 C35.2 8 20 23.2 20 42 C20 57 36 76 47 87 C40 75 26 58 26 43 C26 27.5 38.5 15 54 15 C69.5 15 82 27.5 82 43 C82 56 71 71 62 82 C74 71 88 55 88 42 C88 23.2 72.8 8 54 8 Z"
+                    fill="#E8702A"
+                  />
+                  <g clip-path="url(#pinCircleClip)">
+                    <rect
+                      x="24"
+                      y="14"
+                      width="60"
+                      height="60"
+                      fill="url(#skyGrad)"
+                    />
+                    <circle cx="71" cy="44" r="9.5" fill="#E8702A" />
+                    <path
+                      d="M24 62 L44 43 L63 57 L78 46 L88 58 L88 74 L24 74 Z"
+                      fill="#C49A6C"
+                    />
+                    <path
+                      d="M24 66 L38 52 L56 63 L72 49 L88 62 L88 74 L24 74 Z"
+                      fill="#8C5836"
+                    />
+                    <g fill="#4A2C18">
+                      <rect x="37" y="55" width="12" height="16" />
+                      <path d="M31 56 L43 51 L55 56 L52 57.5 L34 57.5 Z" />
+                      <path d="M32.5 50.5 L43 46 L53.5 50.5 L51 52 L35 52 Z" />
+                      <path d="M34 45 L43 41 L52 45 L49.5 46.5 L36.5 46.5 Z" />
+                      <path d="M36 40 L43 36.5 L50 40 L48 41.2 L38 41.2 Z" />
+                      <path
+                        d="M38 35.2 L43 32 L48 35.2 L46.5 36.2 L39.5 36.2 Z"
+                      />
+                      <path d="M42.2 26 L43.8 26 L44.5 33 L41.5 33 Z" />
+                    </g>
+                  </g>
+                  <path
+                    d="M16 49 C10 64 26 72 48 66 C62 62 73 65 79 71 C72 62 60 58 46 62 C27 67 16 60 16 49 Z"
+                    fill="#E8702A"
+                  />
+                  <g transform="translate(115, 7) rotate(-18)">
+                    <path
+                      d="M0 10 L22 6 L26 7.5 L16 12 L21 19 L18 20 L10 13.5 L3 15 L1 12 Z"
+                      fill="#5E3A24"
+                    />
+                  </g>
+                  <text
+                    x="105"
+                    y="45"
+                    font-family="'Plus Jakarta Sans', sans-serif"
+                    font-weight="800"
+                    font-size="33"
+                    fill="#5E3A24"
+                  >
+                    Hidden
+                  </text>
+                  <text
+                    x="98"
+                    y="75"
+                    font-family="'Plus Jakarta Sans', sans-serif"
+                    font-weight="800"
+                    font-size="38"
+                    fill="#E8702A"
+                  >
+                    Wonders
+                  </text>
+                  <path
+                    d="M275 45 L278 34"
+                    stroke="#E8702A"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M281 49 L290 41"
+                    stroke="#E8702A"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M284 55 L295 53"
+                    stroke="#E8702A"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                  />
+                  <text
+                    x="135"
+                    y="92.5"
+                    font-family="'Plus Jakarta Sans', sans-serif"
+                    font-weight="600"
+                    font-size="10.5"
+                    fill="#5E3A24"
+                    letter-spacing="2.8"
+                  >
+                    Discover Indonesia
+                  </text>
+                </svg>
+              </a>
+            </div>
+
+            <div class="space-y-2.5">
+              <p class="text-[11px] font-semibold text-ink">Follow us on</p>
+              <div class="flex items-center space-x-2">
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    showToast('Instagram', '@hiddenwonders.id');
+                  "
+                  class="w-7 h-7 rounded-md bg-ink text-white flex items-center justify-center hover:bg-brandOrange transition"
+                  ><i data-lucide="instagram" class="w-3.5 h-3.5"></i
+                ></a>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    showToast('Facebook', 'Hidden Wonders Indonesia');
+                  "
+                  class="w-7 h-7 rounded-md bg-ink text-white flex items-center justify-center hover:bg-brandOrange transition"
+                  ><i data-lucide="facebook" class="w-3.5 h-3.5"></i
+                ></a>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    showToast('Twitter / X', '@hiddenwonders_id');
+                  "
+                  class="w-7 h-7 rounded-md bg-ink text-white flex items-center justify-center hover:bg-brandOrange transition"
+                  ><i data-lucide="twitter" class="w-3.5 h-3.5"></i
+                ></a>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    showToast('YouTube', 'Hidden Wonders Official');
+                  "
+                  class="w-7 h-7 rounded-md bg-ink text-white flex items-center justify-center hover:bg-brandOrange transition"
+                  ><i data-lucide="youtube" class="w-3.5 h-3.5"></i
+                ></a>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    showToast(
+                      'Compass Community',
+                      'Gabung komunitas pejalan Nusantara',
+                    );
+                  "
+                  class="w-7 h-7 rounded-md bg-ink text-white flex items-center justify-center hover:bg-brandOrange transition"
+                  ><i data-lucide="compass" class="w-3.5 h-3.5"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 3: About Us -->
+          <div class="space-y-2.5">
+            <h5 class="font-bold text-ink text-xs">About Us</h5>
+            <ul class="space-y-2 text-[11px] text-muted">
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >About Hidden Wonders</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Contact Us</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Terms and Conditions</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Privacy Policy</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Work For Us</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Write For Us</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-brandOrange transition"
+                  >Cookie Settings</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Travel Interest -->
+          <div class="space-y-2.5">
+            <h5 class="font-bold text-ink text-xs">Travel Interest</h5>
+            <ul class="space-y-2 text-[11px] text-muted">
+              <li>
+                <a
+                  href="#destinations"
+                  class="hover:text-brandOrange transition"
+                  >Family Holidays</a
+                >
+              </li>
+              <li>
+                <a href="#stories" class="hover:text-brandOrange transition"
+                  >Honeymoon & Romance</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  class="hover:text-brandOrange transition"
+                  >Volcano & Adventure</a
+                >
+              </li>
+              <li>
+                <a href="#stories" class="hover:text-brandOrange transition"
+                  >Art and Culture</a
+                >
+              </li>
+              <li>
+                <a href="#highlights" class="hover:text-brandOrange transition"
+                  >Diving & Liveaboard</a
+                >
+              </li>
+              <li>
+                <a href="#stories" class="hover:text-brandOrange transition"
+                  >Travel on a Budget</a
+                >
+              </li>
+              <li>
+                <a href="#stories" class="hover:text-brandOrange transition"
+                  >Road Trips</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Col 5: Top Destinations -->
+          <div class="space-y-2.5">
+            <h5 class="font-bold text-ink text-xs">Top Destinations</h5>
+            <ul class="space-y-2 text-[11px] text-muted">
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('bali-nt', null)"
+                  class="hover:text-brandOrange transition"
+                  >Bali & Nusa Penida</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('papua', null)"
+                  class="hover:text-brandOrange transition"
+                  >Raja Ampat</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('bali-nt', null)"
+                  class="hover:text-brandOrange transition"
+                  >Labuan Bajo</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('jawa', null)"
+                  class="hover:text-brandOrange transition"
+                  >Gunung Bromo</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('jawa', null)"
+                  class="hover:text-brandOrange transition"
+                  >Yogyakarta</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('sumatera', null)"
+                  class="hover:text-brandOrange transition"
+                  >Danau Toba</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#destinations"
+                  onclick="filterDestinations('bali-nt', null)"
+                  class="hover:text-brandOrange transition"
+                  >Wae Rebo Flores</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Col 6: Guidebook Shop -->
+          <div class="space-y-2.5">
+            <h5 class="font-bold text-ink text-xs">Guidebook Shop</h5>
+            <ul class="space-y-2 text-[11px] text-muted">
+              <li>
+                <a href="#newsletter" class="hover:text-brandOrange transition"
+                  >Destination Guides</a
+                >
+              </li>
+              <li>
+                <a href="#newsletter" class="hover:text-brandOrange transition"
+                  >Non-English Guides</a
+                >
+              </li>
+              <li>
+                <a href="#newsletter" class="hover:text-brandOrange transition"
+                  >Phrasebooks Bahasa</a
+                >
+              </li>
+              <li>
+                <a href="#newsletter" class="hover:text-brandOrange transition"
+                  >Kids Travel Guides</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Dark Copyright Bar (Matches Mockup Bottom Dark Strip) -->
+      <div class="bg-ink text-gray-400 text-[10.5px] py-3.5 px-4 sm:px-6">
+        <div
+          class="max-w-[1140px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2"
+        >
+          <p>
+            © 2026 Hidden Wonders — Discover Indonesia. All rights reserved.
+          </p>
+          <p class="text-gray-500">
+            Crafted for Indonesian Archipelago Explorers
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ================= INTERACTIVE JAVASCRIPT & SCROLL ANIMATION ENGINE ================= -->
+  </body>
+</html>
